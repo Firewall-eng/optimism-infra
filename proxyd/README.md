@@ -1,3 +1,16 @@
+# Dockerized Proxyd
+
+```
+cd proxyd
+
+docker run \                                                                              5s
+  -v $(pwd)/config.toml:/etc/proxyd/proxyd.toml \
+  -p 8080:8080 \
+  -p 8085:8085 \
+  -p 9761:9761 \
+  proxyd
+```
+
 # rpc-proxy
 
 This tool implements `proxyd`, an RPC request router and proxy. It does the following things:
