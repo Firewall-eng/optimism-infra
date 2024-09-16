@@ -3,7 +3,9 @@
 ```
 cd proxyd
 
-docker run \                                                                              5s
+docker build -t proxyd .
+
+docker run \
   -v $(pwd)/config.toml:/etc/proxyd/proxyd.toml \
   -p 8080:8080 \
   -p 8085:8085 \
