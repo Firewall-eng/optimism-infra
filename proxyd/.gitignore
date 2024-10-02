@@ -1,3 +1,4 @@
 bin
 
 config.toml
+init-env.sh
