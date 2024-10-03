@@ -1,16 +1,14 @@
 # Dockerized Proxyd
 
-```
+```sh
 cd proxyd
 
 docker build -t proxyd .
+```
+To run the container:
 
-docker run \
-  -v $(pwd)/config.toml:/etc/proxyd/proxyd.toml \
-  -p 8080:8080 \
-  -p 8085:8085 \
-  -p 9761:9761 \
-  proxyd
+```sh
+docker compose up -d
 ```
 
 # rpc-proxy

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  proxyd:
+    image: proxyd
+    environment:
+      - OP_NODE_REPLICA_0_URL=$OP_NODE_REPLICA_0_URL
+      - OP_GETH_REPLICA_0_URL=$OP_GETH_REPLICA_0_URL
+      - OP_NODE_REPLICA_1_URL=$OP_NODE_REPLICA_1_URL
+      - OP_GETH_REPLICA_1_URL=$OP_GETH_REPLICA_1_URL
+    volumes:
+      - ./config.toml:/etc/proxyd/proxyd.toml
+    ports:
+      - "8080:8080"
+      - "8085:8085"
+      - "9761:9761"
