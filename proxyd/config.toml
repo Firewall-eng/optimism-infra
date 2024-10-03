@@ -1,0 +1,212 @@
+# List of WS methods to whitelist.
+ws_method_whitelist = [
+  "eth_subscribe",
+  "eth_unsubscribe",
+  "eth_chainId",
+
+]
+# Enable WS on this backend group. There can only be one WS-enabled backend group.
+ws_backend_group = "l2-execution-other-requests"
+
+[server]
+# Host for the proxyd RPC server to listen on.
+rpc_host = "0.0.0.0"
+# Port for the above.
+rpc_port = 8080
+# Host for the proxyd WS server to listen on.
+ws_host = "0.0.0.0"
+# Port for the above
+# Set the ws_port to 0 to disable WS
+ws_port = 8085
+# Maximum client body size, in bytes, that the server will accept.
+max_body_size_bytes = 10485760
+max_concurrent_rpcs = 1000
+# Server log level
+log_level = "info"
+
+[cache]
+enabled = false
+
+[redis]
+# URL to a Redis instance.
+# url = "redis://localhost:6379"
+# namespace = ""
+
+[metrics]
+# Whether or not to enable Prometheus metrics.
+enabled = true
+# Host for the Prometheus metrics endpoint to listen on.
+host = "0.0.0.0"
+# Port for the above.
+port = 9761
+
+[rate_limit]
+use_redis = false
+base_rate = 300
+base_interval = "1s"
+#exempt_origins = ["example.com", "api.example.com"]
+#exempt_user_agents = ["UserAgent1", "UserAgent2"]
+error_message = "rate limit exceeded, please try it later."
+ip_header_override = ""
+disuse_ip = true
+
+[backend]
+# How long proxyd should wait for a backend response before timing out.
+response_timeout_seconds = 5
+# Maximum response size, in bytes, that proxyd will accept from a backend.
+max_response_size_bytes = 5242880
+# Maximum number of times proxyd will try a backend before giving up.
+max_retries = 3
+# Number of seconds to wait before trying an unhealthy backend again.
+out_of_service_seconds = 600
+# Maximum latency accepted to serve requests, default 10s
+max_latency_threshold = "30s"
+# Maximum latency accepted to serve requests before degraded, default 5s
+max_degraded_latency_threshold = "10s"
+# Maximum error rate accepted to serve requests, default 0.5 (i.e. 50%)
+max_error_rate_threshold = 0.3
+
+[backends]
+# A map of backends by name.
+
+[backends.op-node-replica-0]
+rpc_url = "$OP_NODE_REPLICA_0_URL"
+username = ""
+password = ""
+max_rps = 3
+max_ws_conns = 1
+weight = 1
+
+[backends.op-geth-replica-0]
+rpc_url = "$OP_GETH_REPLICA_0_URL"
+username = ""
+password = ""
+max_rps = 3
+max_ws_conns = 1
+weight = 1
+
+[backends.op-node-replica-1]
+rpc_url = "$OP_NODE_REPLICA_1_URL"
+username = ""
+password = ""
+max_rps = 3
+max_ws_conns = 1
+weight = 1
+
+[backends.op-geth-replica-1]
+rpc_url = "$OP_GETH_REPLICA_1_URL"
+username = ""
+password = ""
+max_rps = 3
+max_ws_conns = 1
+weight = 1
+
+[backend_groups]
+[backend_groups.l2-execution-other-requests]
+backends = ["op-geth-replica-0"]
+# Enable consensus awareness for backend group, making it act as a load balancer, default false
+# consensus_aware = true
+# Period in which the backend wont serve requests if banned, default 5m
+# consensus_ban_period = "1m"
+# Maximum delay for update the backend, default 30s
+# consensus_max_update_threshold = "20s"
+# Maximum block lag, default 8
+# consensus_max_block_lag = 16
+# Maximum block range (for eth_getLogs method), no default
+# consensus_max_block_range = 20000
+# Minimum peer count, default 3
+# consensus_min_peer_count = 4
+
+[backend_groups.l2-execution-transaction-requests]
+backends = ["op-geth-replica-1"]
+
+[backend_groups.l2-consensus]
+backends = ["op-node-replica-0"]
+# If the authentication group below is in the config,
+# proxyd will only accept authenticated requests.
+[authentication]
+# Mapping of auth key to alias. The alias is used to provide a human-
+# readable name for the auth key in monitoring. The auth key will be
+# read from the environment if an environment variable prefixed with $
+# is provided. Note that you will need to quote the environment variable
+# in order for it to be value TOML, e.g. "$FOO_AUTH_KEY" = "foo_alias".
+# secret = "test"
+
+# Mapping of methods to backend groups.
+[rpc_method_mappings]
+#Getting Blocks
+# Retrieves information from a particular block in the blockchain.
+eth_blockNumber = "l2-execution-other-requests"
+eth_getBlockByNumber = "l2-execution-other-requests"
+eth_getBlockByHash = "l2-execution-other-requests"
+eth_getBlockTransactionCountByNumber = "l2-execution-other-requests"
+eth_getBlockTransactionCountByHash = "l2-execution-other-requests"
+eth_getBlockRange = "l2-execution-other-requests"
+#Getting Uncles
+#Returns information on uncle blocks which are network rejected blocks and replaced by a canonical block instead.
+eth_getUncleByBlockHashAndIndex = "l2-execution-other-requests"
+eth_getUncleByBlockNumberAndIndex = "l2-execution-other-requests"
+eth_getUncleCountByBlockHash = "l2-execution-other-requests"
+eth_getUncleCountByBlockNumber = "l2-execution-other-requests"
+#Getting hash( alchemy not inculded)
+eth_getHeaderByNumber = "l2-execution-other-requests"
+eth_getHeaderByHash = "l2-execution-other-requests"
+#Reading Transactions
+#Retrieves information on the state data for addresses regardless of whether it is a user or a smart contract.
+eth_getTransactionByBlockHashAndIndex = "l2-execution-other-requests"
+eth_getTransactionByBlockNumberAndIndex = "l2-execution-other-requests"
+eth_getRawTransactionByBlockNumberAndIndex = "l2-execution-other-requests"   #( alchemy not inculded)
+eth_getRawTransactionByBlockHashAndIndex = "l2-execution-other-requests"     #( alchemy not inculded)
+eth_getTransactionCount = "l2-execution-other-requests"
+eth_getTransactionByHash = "l2-execution-other-requests"
+eth_getTransactionReceipt = "l2-execution-other-requests"
+eth_getRawTransactionByHash = "l2-execution-other-requests"
+#Writing Transactions & EVM Execution
+#Allows developers to both send ETH from one address to another, write data on-chain, and interact with smart contracts.
+eth_call = "l2-execution-transaction-requests"
+eth_sendRawTransaction = "l2-execution-transaction-requests"
+eth_resend = "l2-execution-transaction-requests" #Getting hash( alchemy not inculded)
+#Account Information
+#Returns information regarding an address's stored on-chain data.
+eth_getBalance = "l2-execution-other-requests"
+#eth_accounts = "main"    [forbidden]
+eth_getProof = "l2-execution-other-requests"
+eth_getCode = "l2-execution-other-requests"
+eth_getStorageAt = "l2-execution-other-requests"
+#Event Logs
+#Returns logs which are records that denote/provide context on specific events within a smart contract, like a token transfer or a change of ownership for example.
+eth_getLogs = "l2-execution-other-requests"
+eth_newFilter = "l2-execution-other-requests"
+eth_newBlockFilter = "l2-execution-other-requests"
+eth_newPendingTransactionFilter = "l2-execution-other-requests"
+eth_getFilterLogs = "l2-execution-other-requests"
+eth_getFilterChanges = "l2-execution-other-requests"
+eth_uninstallFilter = "l2-execution-other-requests"
+#Chain Information
+#Returns information on the Optimism network and internal settings.
+eth_protocolVersion = "l2-execution-other-requests"
+eth_chainId = "l2-execution-other-requests"
+net_listening = "l2-execution-other-requests"
+eth_syncing = "l2-execution-other-requests"
+net_version = "l2-execution-other-requests"
+#Gas Estimation
+eth_estimateGas = "l2-execution-other-requests"
+eth_gasPrice = "l2-execution-other-requests"
+
+#Real-time Events
+#Introduces WebSocket-based requests/responses which leverage a network connection allowing developers to listen for changes continuously without the need for HTTP polling.
+eth_subscribe = "l2-execution-other-requests"
+eth_unsubscribe = "l2-execution-other-requests"
+# txstatus,added for txstatus
+eth_getTxStatusByHash = "l2-execution-other-requests"
+eth_getTxStatusDetailByHash = "l2-execution-other-requests"
+
+# rollup api
+rollup_getInfo = "l2-execution-other-requests"   #( alchemy not inculded)
+rollup_gasPrices = "l2-execution-other-requests" #( alchemy not inculded)
+
+# optimism
+optimism_syncStatus = "l2-consensus"
+optimism_outputAtBlock = "l2-consensus"
+optimism_rollupConfig = "l2-consensus"
+optimism_version = "l2-consensus"
